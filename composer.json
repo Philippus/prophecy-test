@@ -1,0 +1,10 @@
+{
+    "require-dev": {
+        "phpspec/prophecy": "~1.0",
+		"phpunit/phpunit": "4.3.*"
+    },
+
+    "autoload": {
+        "psr-0": { "Philippus": "src" }
+    }
+}
