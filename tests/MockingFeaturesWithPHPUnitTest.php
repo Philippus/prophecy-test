@@ -35,6 +35,48 @@ class MockingFeaturesWithPHPUnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * A fake is an object double, which doesn't have any expectations about the object behavior,
+     * but when put in specific environment, behaves in specific way with some simple logic
+     */
+    public function testPhpunitCanProvideAFake()
+    {
+        $testValue = 'test';
+
+        $foo = $this->getMock('Philippus\Foo', array('getFoo', 'returnProvidedValue'));
+
+        $foo->expects($this->any())->method('getFoo')->will($this->returnValue($testValue));
+
+        $foo->expects($this->any())
+            ->method('returnProvidedValue')
+            ->will($this->returnArgument(0));
+
+        $bar = new Philippus\Bar($foo);
+
+        $this->assertEquals($testValue, $bar->getProvidedFooValue($foo, $testValue));
+    }
+
+    /**
+     * A fake is an object double, which doesn't have any expectations about the object behavior,
+     * but when put in specific environment, behaves in specific way with some simple logic
+     */
+    public function testPhpunitCanProvideAFakeWithACallback()
+    {
+        $testValue = 'test';
+
+        $foo = $this->getMock('Philippus\Foo', array('getFoo', 'returnProvidedValue'));
+
+        $foo->expects($this->any())->method('getFoo')->will($this->returnValue($testValue));
+
+        $foo->expects($this->any())
+            ->method('returnProvidedValue')
+            ->will($this->returnCallback(function($args) { return($args); }));
+
+        $bar = new Philippus\Bar($foo);
+
+        $this->assertEquals($testValue, $bar->getProvidedFooValue($foo, $testValue));
+    }
+
+    /**
      * A mock is an object double, which has expectations about the object behavior
      */
     public function testPhpunitCanProvideAMock()
@@ -49,9 +91,31 @@ class MockingFeaturesWithPHPUnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * A spy is an object double, and _we_ can have expectations about the object behavior after the fact
+     * A spy is an object double, and we can have expectations about the object behavior after code execution
      */
     public function testPhpunitCanProvideASpy()
+    {
+        $invocations = 0;
+
+        $foo = $this->getMock('Philippus\Foo', array('getFoo'));
+
+        $foo->expects($this->any())
+            ->method('getFoo')
+            ->will($this->returnCallback(
+                function () use (&$invocations) {
+                    $invocations++;
+                }
+            ));
+
+        $bar = new Philippus\Bar($foo);
+
+        $this->assertEquals(1, $invocations);
+    }
+
+    /**
+     * A spy is an object double, and we can have expectations about the object behavior after code execution
+     */
+    public function testPhpunitCanProvideASpyInAnotherWay()
     {
         $foo = $this->getMock('Philippus\Foo', array('getFoo'));
 

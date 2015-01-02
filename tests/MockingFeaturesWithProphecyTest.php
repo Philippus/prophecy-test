@@ -36,6 +36,65 @@ class MockingFeaturesWithPropecyTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * A fake is an object double, which doesn't have any expectations about the object behavior,
+     * but when put in specific environment, behaves in specific way with some simple logic
+     */
+    public function testProphecyCanProvideAFake()
+    {
+        $testValue = 'test';
+
+        $foo = $this->prophet->prophesize('Philippus\Foo');
+
+        $foo->getFoo()->willReturn($testValue);
+        $foo->returnProvidedValue(\Prophecy\Argument::type('string'))->willReturnArgument(0);
+
+        $bar = new Philippus\Bar($foo->reveal());
+
+        $this->assertEquals($testValue, $bar->getProvidedFooValue($foo->reveal(), $testValue), $testValue);
+    }
+
+    /**
+     * A fake is an object double, which doesn't have any expectations about the object behavior,
+     * but when put in specific environment, behaves in specific way with some simple logic
+     */
+    public function testProphecyCanProvideAFakeWithACallback()
+    {
+        $testValue = 'test';
+
+        $foo = $this->prophet->prophesize('Philippus\Foo');
+
+        $foo->getFoo()->willReturn($testValue);
+        $foo->returnProvidedValue(\Prophecy\Argument::type('string'))->will(function($args) {
+            return($args[0]);
+        });
+
+        $bar = new Philippus\Bar($foo->reveal());
+
+        $this->assertEquals($testValue, $bar->getProvidedFooValue($foo->reveal(), $testValue), $testValue);
+    }
+
+    /**
+     * A fake is an object double, which doesn't have any expectations about the object behavior,
+     * but when put in specific environment, behaves in specific way with some simple logic
+     */
+    public function testProphecyCanProvideAFakeWhereMethodCallsChangeBehaviorOfOthers()
+    {
+        $testValue = 'test';
+
+        $foo = $this->prophet->prophesize('Philippus\Foo');
+
+        $foo->getFoo()->willReturn('test2');
+
+        $foo->setFoo(\Prophecy\Argument::type('string'))->will(function($args) {
+            $this->getFoo()->willReturn($args[0]);
+        });
+
+        $bar = new Philippus\Bar($foo->reveal());
+
+        $this->assertEquals($testValue, $bar->setAndGetFoo($foo->reveal(), $testValue), $testValue);
+    }
+
+    /**
      * A mock is an object double, which has expectations about the object behavior
      */
     public function testProphecyCanProvideAMock()
@@ -44,13 +103,13 @@ class MockingFeaturesWithPropecyTest extends PHPUnit_Framework_TestCase {
 
         $foo->getFoo()->willReturn('test');
 
-        $bar = new Philippus\Bar($foo->reveal());
-
         $foo->getFoo()->shouldBeCalled();
+
+        $bar = new Philippus\Bar($foo->reveal());
     }
 
     /**
-     * A spy is an object double, and _we_ can have expectations about the object behavior after the fact
+     * A spy is an object double, and we can have expectations about the object behavior after code execution
      */
     public function testProphecyCanProvideASpy()
     {
@@ -58,7 +117,7 @@ class MockingFeaturesWithPropecyTest extends PHPUnit_Framework_TestCase {
 
         $bar = new Philippus\Bar($foo->reveal());
 
-        $foo->getFoo()->shouldBeCalled();
+        $foo->getFoo()->shouldBeCalledTimes(1);
     }
 
     /**

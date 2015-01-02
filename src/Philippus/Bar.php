@@ -19,4 +19,16 @@ class Bar
     {
         return $foo->getQux();
     }
+
+    public function getProvidedFooValue(Foo $foo, $value)
+    {
+        return $foo->returnProvidedValue($value);
+    }
+
+    public function setAndGetFoo(Foo $foo, $value)
+    {
+        $foo->setFoo($value);
+        return $foo->getFoo();
+    }
+
 }

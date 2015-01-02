@@ -19,4 +19,9 @@ class Foo
     {
         return 'qux';
     }
+
+    public function returnProvidedValue($value)
+    {
+        return $value;
+    }
 }
