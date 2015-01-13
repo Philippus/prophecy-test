@@ -1,6 +1,6 @@
 <?php
 
-class MockingFeaturesWithPropecyTest extends PHPUnit_Framework_TestCase {
+class MockingFeaturesWithProphecyTest extends PHPUnit_Framework_TestCase {
 
     /* @var \Prophecy\Prophet $prophet */
     private $prophet;
