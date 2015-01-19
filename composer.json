@@ -5,6 +5,6 @@
     },
 
     "autoload": {
-        "psr-0": { "Philippus": "src" }
+        "psr-4": { "Philippus": "src" }
     }
 }
